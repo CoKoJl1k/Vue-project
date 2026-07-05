@@ -25,7 +25,7 @@ Railway сам соберёт и запустит Docker Compose. Бесплат
 git init
 git add .
 git commit -m "init"
-git remote add origin https://github.com/твой-юзер/currency-monitor.git
+git remote add origin https://github.com/user/currency-monitor.git
 git push -u origin main
 ```
 
@@ -45,25 +45,25 @@ git push -u origin main
 
 В настройках сервиса → **Variables** добавь:
 
-| Variable | Value |
-|----------|-------|
-| `APP_KEY` | `base64:cqQD0b071DLemCkcb9b6+GK8T5nwJk65dF748nyDzdI=` |
-| `APP_ENV` | `production` |
-| `APP_DEBUG` | `false` |
-| `DB_CONNECTION` | `pgsql` |
-| `DB_HOST` | `${{Postgres.PGHOST}}` |
-| `DB_PORT` | `${{Postgres.PGPORT}}` |
-| `DB_DATABASE` | `${{Postgres.PGDATABASE}}` |
-| `DB_USERNAME` | `${{Postgres.PGUSER}}` |
-| `DB_PASSWORD` | `${{Postgres.PGPASSWORD}}` |
-| `MAIL_MAILER` | `smtp` |
-| `MAIL_HOST` | `smtp.gmail.com` |
-| `MAIL_PORT` | `587` |
-| `MAIL_USERNAME` | `mlz.psant@gmail.com` |
-| `MAIL_PASSWORD` | `ctnc htve kdiw hjac` |
-| `MAIL_ENCRYPTION` | `tls` |
-| `MAIL_FROM_ADDRESS` | `mlz.psant@gmail.com` |
-| `MAIL_FROM_NAME` | `CurrencyMonitor` |
+| Variable | Value                                                                |
+|----------|----------------------------------------------------------------------|
+| `APP_KEY` | generate: `php -r "echo 'base64:'.base64_encode(random_bytes(32));"` |
+| `APP_ENV` | `production`                                                         |
+| `APP_DEBUG` | `false`                                                              |
+| `DB_CONNECTION` | `pgsql`                                                              |
+| `DB_HOST` | `${{Postgres.PGHOST}}`                                               |
+| `DB_PORT` | `${{Postgres.PGPORT}}`                                               |
+| `DB_DATABASE` | `${{Postgres.PGDATABASE}}`                                           |
+| `DB_USERNAME` | `${{Postgres.PGUSER}}`                                               |
+| `DB_PASSWORD` | `${{Postgres.PGPASSWORD}}`                                           |
+| `MAIL_MAILER` | `smtp`                                                               |
+| `MAIL_HOST` | `smtp.gmail.com`                                                     |
+| `MAIL_PORT` | `587`                                                                |
+| `MAIL_USERNAME` | `test@gmail.com`                                                     |
+| `MAIL_PASSWORD` | (твой пароль приложения Gmail)                                       |
+| `MAIL_ENCRYPTION` | `tls`                                                                |
+| `MAIL_FROM_ADDRESS` | `test@gmail.com`                                                     |
+| `MAIL_FROM_NAME` | `CurrencyMonitor`                                                    |
 
 Railway сам подставит `${{Postgres.PG*}}` значения из сервиса БД.
 
