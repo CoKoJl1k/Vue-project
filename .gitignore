@@ -28,6 +28,13 @@ coverage
 
 .eslintcache
 
+# Backend
+/backend/vendor
+/backend/.env
+/backend/storage/logs/*
+!/backend/storage/logs/.gitkeep
+/backend/node_modules
+
 # Cypress
 /cypress/videos/
 /cypress/screenshots/

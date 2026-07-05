@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y libpq-dev \
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
-COPY . .
+COPY ./backend/ .
 
 RUN composer install --no-interaction --optimize-autoloader
 
