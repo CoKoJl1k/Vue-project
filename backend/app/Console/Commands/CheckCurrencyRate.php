@@ -40,7 +40,7 @@ class CheckCurrencyRate extends Command
 
             Mail::raw(
                 "Курс {$alert->currency}: {$rate} BYN\nПорог: {$alert->threshold} BYN\nДата: " . now()->format('d-m-Y H:i'),
-                fn ($msg) => $msg->to($alert->email)->subject("Курс {$alert->currency} достиг порога")
+                fn ($msg) => $msg->to($alert->email)->subject(config('app.name') . " — курс {$alert->currency} достиг порога")
             );
 
             $alert->update(['last_sent_at' => now()]);
