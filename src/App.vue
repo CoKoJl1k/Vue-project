@@ -9,10 +9,7 @@ const theme = useTheme()
   <div :class="{ dark: theme.isDark.value }">
     <header>
       <nav>
-        <RouterLink to="/">Главная</RouterLink>
-        <RouterLink to="/products">Товары</RouterLink>
-        <RouterLink to="/cart">Корзина</RouterLink>
-        <RouterLink to="/register">Регистрация</RouterLink>
+        <RouterLink to="/notes">Заметки</RouterLink>
         <button @click="theme.toggle">
           {{ theme.isDark.value ? '☀️' : '🌙' }}
         </button>
