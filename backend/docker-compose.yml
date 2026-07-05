@@ -1,0 +1,20 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - /app/vendor
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+
+  cron:
+    build: .
+    command: php artisan schedule:work
+    volumes:
+      - .:/app
+      - /app/vendor
+    depends_on:
+      - app

@@ -1,0 +1,70 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: app
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: user
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d app"]
+      interval: 3s
+      retries: 10
+
+  backend:
+    build: backend
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./backend:/app
+      - /app/vendor
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: app
+      DB_USERNAME: user
+      DB_PASSWORD: user
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "until php artisan migrate --force 2>/dev/null; do echo 'waiting for db...' && sleep 2; done &&
+             php artisan serve --host=0.0.0.0 --port=8000"
+
+  cron:
+    build: backend
+    volumes:
+      - ./backend:/app
+      - /app/vendor
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: app
+      DB_USERNAME: user
+      DB_PASSWORD: user
+    depends_on:
+      backend:
+        condition: service_started
+    command: php artisan schedule:work
+
+  frontend:
+    image: node:22
+    working_dir: /app
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    command: sh -c "npm install && npm run dev -- --host"
+
+volumes:
+  pgdata:

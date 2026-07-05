@@ -10,6 +10,7 @@ const theme = useTheme()
     <header>
       <nav>
         <RouterLink to="/">Главная</RouterLink>
+        <RouterLink to="/currency">Курсы валют</RouterLink>
         <RouterLink to="/notes">Заметки</RouterLink>
         <button @click="theme.toggle">
           {{ theme.isDark.value ? '☀️' : '🌙' }}
