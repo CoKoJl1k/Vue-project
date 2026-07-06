@@ -1,4 +1,4 @@
-{$PORT} {
+http://{$PORT} {
 	root * /app/dist
 	try_files {path} {path}/ /index.html
 	file_server
