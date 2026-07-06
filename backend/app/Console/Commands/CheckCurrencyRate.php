@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use App\Models\CurrencyAlert;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Mail;
 
 class CheckCurrencyRate extends Command
 {
@@ -38,10 +37,17 @@ class CheckCurrencyRate extends Command
                 return 0;
             }
 
-            Mail::raw(
-                "Курс {$alert->currency}: {$rate} BYN\nПорог: {$alert->threshold} BYN\nДата: " . now()->format('d-m-Y H:i'),
-                fn ($msg) => $msg->to($alert->email)->subject(config('app.name') . " — курс {$alert->currency} достиг порога")
-            );
+            $text = "📈 Курс {$alert->currency}: {$rate} BYN\n📊 Порог: {$alert->threshold} BYN\n📅 Дата: " . now()->format('d-m-Y H:i');
+
+            $telegramResponse = Http::post('https://api.telegram.org/bot' . env('TELEGRAM_BOT_TOKEN') . '/sendMessage', [
+                'chat_id' => env('TELEGRAM_CHAT_ID'),
+                'text' => $text,
+            ]);
+
+            if (!$telegramResponse->successful()) {
+                $this->error('Telegram error: ' . $telegramResponse->body());
+                return 1;
+            }
 
             $alert->update(['last_sent_at' => now()]);
 
