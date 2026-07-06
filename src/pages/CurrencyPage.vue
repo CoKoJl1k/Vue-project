@@ -186,6 +186,10 @@ function convert(from, amount) {
       <div class="notify-section">
         <h2>Уведомление в Telegram</h2>
         <div class="form-row">
+          <label>Email:</label>
+          <input v-model="notifyEmail" placeholder="email" class="notify-input" />
+        </div>
+        <div class="form-row">
           <label>Валюта:</label>
           <select v-model="notifyCurrency">
             <option v-for="cur in currencies" :key="cur.Cur_Abbreviation" :value="cur.Cur_Abbreviation">
@@ -302,5 +306,6 @@ select {
   background: var(--bg);
   color: var(--text);
   border: 1px solid var(--border);
+  border-radius: 6px;
 }
 </style>

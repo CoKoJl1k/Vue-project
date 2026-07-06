@@ -13,12 +13,11 @@ class CurrencyAlertController extends Controller
         $data['currency'] = strtoupper($data['currency']);
 
         CurrencyAlert::updateOrCreate(
-            ['telegram_chat_id' => $data['telegram_chat_id'], 'currency' => $data['currency']],
+            ['email' => $data['email'], 'currency' => $data['currency']],
             [
                 'threshold' => $data['threshold'],
-                'telegram_bot_token' => $data['telegram_bot_token'],
-                'telegram_chat_id' => $data['telegram_chat_id'],
-                'email' => $data['telegram_chat_id'],
+                'telegram_bot_token' => $data['telegram_bot_token'] ?? null,
+                'telegram_chat_id' => $data['telegram_chat_id'] ?? null,
             ]
         );
 

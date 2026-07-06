@@ -14,10 +14,11 @@ class CurrencyRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'email' => 'required|email',
             'currency' => 'required|string|size:3',
             'threshold' => 'required|numeric|min:0.01|max:999999.99',
-            'telegram_bot_token' => 'required|string',
-            'telegram_chat_id' => 'required|string',
+            'telegram_bot_token' => 'nullable|string',
+            'telegram_chat_id' => 'nullable|string',
         ];
     }
 }
