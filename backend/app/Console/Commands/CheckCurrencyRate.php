@@ -51,7 +51,7 @@ class CheckCurrencyRate extends Command
 
             $alert->update(['last_sent_at' => now()]);
 
-            $this->info("Notification sent to {$alert->email}");
+            $this->info("Telegram notification sent");
         } else {
             $this->info("Rate {$rate} below threshold {$alert->threshold}");
         }
