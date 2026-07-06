@@ -136,69 +136,78 @@ function convert(from, amount) {
 
 <template>
   <div class="currency-page">
-    <h1>Курсы валют</h1>
-
     <div v-if="loading" class="loading">Загрузка...</div>
 
-    <table v-else class="rates">
-      <thead>
-        <tr>
-          <th>Валюта</th>
-          <th>Курс к BYN</th>
-          <th>Конвертер</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="cur in currencies" :key="cur.Cur_Abbreviation">
-          <td>{{ cur.Cur_Abbreviation }} — {{ cur.Cur_Name }}</td>
-          <td>{{ formatRate(cur.Cur_OfficialRate, cur.Cur_Scale) }} BYN</td>
-          <td>
-            1 {{ cur.Cur_Abbreviation }} =
-            {{ formatRate(cur.Cur_OfficialRate, cur.Cur_Scale) }} BYN
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div class="chart-section">
-      <h2>График</h2>
-      <select v-model="selected" @change="loadChart">
-        <option v-for="cur in currencies" :key="cur.Cur_Abbreviation" :value="cur.Cur_Abbreviation">
-          {{ cur.Cur_Abbreviation }}
-        </option>
-      </select>
-
-      <select v-model="period" @change="loadChart">
-        <option v-for="p in periods" :key="p.value" :value="p.value">
-          {{ p.label }}
-        </option>
-      </select>
-
-      <div class="chart-wrapper" v-if="chartData">
-        <Line :data="chartData" :options="chartOptions" />
+    <div v-else class="content-row">
+      <div class="rates-block">
+        <h1>Курсы валют</h1>
+        <table class="rates">
+          <thead>
+            <tr>
+              <th>Валюта</th>
+              <th>Курс к BYN</th>
+              <th>Конвертер</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="cur in currencies" :key="cur.Cur_Abbreviation">
+              <td>{{ cur.Cur_Abbreviation }} — {{ cur.Cur_Name }}</td>
+              <td>{{ formatRate(cur.Cur_OfficialRate, cur.Cur_Scale) }} BYN</td>
+              <td>
+                1 {{ cur.Cur_Abbreviation }} =
+                {{ formatRate(cur.Cur_OfficialRate, cur.Cur_Scale) }} BYN
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      <p v-else class="loading">Загрузка графика...</p>
+
+      <div class="chart-section">
+        <div class="chart-header">
+          <h2>График</h2>
+          <select v-model="selected" @change="loadChart">
+            <option v-for="cur in currencies" :key="cur.Cur_Abbreviation" :value="cur.Cur_Abbreviation">
+              {{ cur.Cur_Abbreviation }}
+            </option>
+          </select>
+          <select v-model="period" @change="loadChart">
+            <option v-for="p in periods" :key="p.value" :value="p.value">
+              {{ p.label }}
+            </option>
+          </select>
+        </div>
+        <div class="chart-wrapper" v-if="chartData">
+          <Line :data="chartData" :options="chartOptions" />
+        </div>
+        <p v-else class="loading">Загрузка графика...</p>
+      </div>
     </div>
 
-    <div class="notify-section">
-      <h2>Уведомление в Telegram</h2>
-      <p>Информация будет отправлена в Telegram бот</p>
-      <input v-model="notifyEmail" placeholder="your@email.com" class="notify-input" />
-      <label>Валюта:</label>
-      <select v-model="notifyCurrency">
-        <option v-for="cur in currencies" :key="cur.Cur_Abbreviation" :value="cur.Cur_Abbreviation">
-          {{ cur.Cur_Abbreviation }}
-        </option>
-      </select>
-      <label>Порог (BYN):</label>
-      <input v-model.number="notifyThreshold" type="number" step="0.01" class="notify-input" />
-      <label>Токен бота:</label>
-      <input v-model="notifyBotToken" placeholder="Telegram bot token" class="notify-input" />
-      <label>Chat ID:</label>
-      <input v-model="notifyChatId" placeholder="Telegram chat ID" class="notify-input" />
-      <button @click="saveNotification">Сохранить</button>
-      <p v-if="notifyStatus" v-text="notifyStatus" />
-    </div>
+      <div class="notify-section">
+        <h2>Уведомление в Telegram</h2>
+        <div class="form-row">
+          <label>Валюта:</label>
+          <select v-model="notifyCurrency">
+            <option v-for="cur in currencies" :key="cur.Cur_Abbreviation" :value="cur.Cur_Abbreviation">
+              {{ cur.Cur_Abbreviation }}
+            </option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Порог (BYN):</label>
+          <input v-model.number="notifyThreshold" type="number" step="0.01" class="notify-input" />
+        </div>
+        <div class="form-row">
+          <label>Токен бота:</label>
+          <input v-model="notifyBotToken" placeholder="bot token" class="notify-input" />
+        </div>
+        <div class="form-row">
+          <label>Chat ID:</label>
+          <input v-model="notifyChatId" placeholder="chat id" class="notify-input" />
+        </div>
+        <button @click="saveNotification">Сохранить</button>
+        <p v-if="notifyStatus" v-text="notifyStatus" />
+      </div>
   </div>
 </template>
 
@@ -210,6 +219,16 @@ function convert(from, amount) {
   color: #999;
   text-align: center;
   padding: 2rem;
+}
+.content-row {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+.rates-block {
+  flex: 1;
+  min-width: 300px;
 }
 .rates {
   width: 100%;
@@ -224,7 +243,20 @@ function convert(from, amount) {
 .rates th {
   background: var(--border);
 }
+.chart-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+.chart-header h2 {
+  margin: 0;
+}
 .chart-section {
+  flex: 1;
+  min-width: 300px;
+  padding: 0 12px;
   width: 100%;
 }
 .chart-section h2 {
@@ -232,10 +264,10 @@ function convert(from, amount) {
 }
 select {
   padding: 6px 12px;
-  margin-bottom: 1rem;
   background: var(--bg);
   color: var(--text);
   border: 1px solid var(--border);
+  border-radius: 6px;
 }
 .chart-wrapper {
   background: #fff;
@@ -247,6 +279,20 @@ select {
 .notify-section {
   margin-top: 2rem;
   max-width: 400px;
+}
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.form-row label {
+  min-width: 100px;
+  flex-shrink: 0;
+}
+.form-row select,
+.form-row .notify-input {
+  flex: 1;
 }
 .notify-input {
   width: 100%;
