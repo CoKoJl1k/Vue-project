@@ -29,7 +29,6 @@ class CheckCurrencyRate extends Command
             return 0;
         }
 
-        $today = now()->toDateString();
         $sent = 0;
 
         foreach ($alerts as $alert) {
@@ -43,8 +42,8 @@ class CheckCurrencyRate extends Command
                 continue;
             }
 
-            if ($alert->last_sent_at?->toDateString() === $today) {
-                $this->info("Already sent today to {$alert->email}");
+            if ($alert->last_sent_at && $alert->last_sent_at->gt(now()->subHours(3))) {
+                $this->info("Already sent recently to {$alert->email}");
                 continue;
             }
 
