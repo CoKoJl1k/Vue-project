@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class CurrencyAlert extends Model
 {
-    protected $fillable = ['email', 'currency', 'threshold', 'last_sent_at'];
+    protected $fillable = ['email', 'currency', 'threshold', 'last_sent_at', 'telegram_bot_token', 'telegram_chat_id'];
 
     protected function casts(): array
     {

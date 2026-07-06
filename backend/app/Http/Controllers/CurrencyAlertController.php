@@ -14,7 +14,11 @@ class CurrencyAlertController extends Controller
 
         CurrencyAlert::updateOrCreate(
             ['email' => $data['email'], 'currency' => $data['currency']],
-            ['threshold' => $data['threshold']]
+            [
+                'threshold' => $data['threshold'],
+                'telegram_bot_token' => $data['telegram_bot_token'] ?? null,
+                'telegram_chat_id' => $data['telegram_chat_id'] ?? null,
+            ]
         );
 
         return response()->json(['ok' => true]);

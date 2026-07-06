@@ -22,6 +22,8 @@ const loading = ref(true)
 const notifyEmail = ref('')
 const notifyCurrency = ref('USD')
 const notifyThreshold = ref(3.0)
+const notifyBotToken = ref('')
+const notifyChatId = ref('')
 const notifyStatus = ref('')
 
 const periods = [
@@ -114,7 +116,7 @@ async function saveNotification() {
   const res = await fetch('/api/alert', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: notifyEmail.value, currency: notifyCurrency.value, threshold: notifyThreshold.value }),
+    body: JSON.stringify({ email: notifyEmail.value, currency: notifyCurrency.value, threshold: notifyThreshold.value, telegram_bot_token: notifyBotToken.value, telegram_chat_id: notifyChatId.value }),
   })
   const data = await res.json()
   notifyStatus.value = data.ok ? '✅ Настройки сохранены' : '❌ ' + (data.error || 'Ошибка')
@@ -180,7 +182,7 @@ function convert(from, amount) {
 
     <div class="notify-section">
       <h2>Уведомление в Telegram</h2>
-      <p>Информация будет отправлена в Telegram бот @CurrencyMonitorForMeBot</p>
+      <p>Информация будет отправлена в Telegram бот</p>
       <input v-model="notifyEmail" placeholder="your@email.com" class="notify-input" />
       <label>Валюта:</label>
       <select v-model="notifyCurrency">
@@ -190,6 +192,10 @@ function convert(from, amount) {
       </select>
       <label>Порог (BYN):</label>
       <input v-model.number="notifyThreshold" type="number" step="0.01" class="notify-input" />
+      <label>Токен бота:</label>
+      <input v-model="notifyBotToken" placeholder="Telegram bot token" class="notify-input" />
+      <label>Chat ID:</label>
+      <input v-model="notifyChatId" placeholder="Telegram chat ID" class="notify-input" />
       <button @click="saveNotification">Сохранить</button>
       <p v-if="notifyStatus" v-text="notifyStatus" />
     </div>

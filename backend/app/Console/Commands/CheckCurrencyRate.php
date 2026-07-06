@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Http;
 class CheckCurrencyRate extends Command
 {
     protected $signature = 'currency:check';
-    protected $description = 'Check USD rate and send email if threshold reached';
+    protected $description = 'Check USD rate and send telegram if threshold reached';
 
     public function handle(): int
     {
@@ -33,6 +33,11 @@ class CheckCurrencyRate extends Command
         $sent = 0;
 
         foreach ($alerts as $alert) {
+            if (!$alert->telegram_bot_token || !$alert->telegram_chat_id) {
+                $this->warn("Telegram not configured for {$alert->email}");
+                continue;
+            }
+
             if ($rate < $alert->threshold) {
                 $this->info("Rate {$rate} below {$alert->threshold} for {$alert->email}");
                 continue;
@@ -45,8 +50,8 @@ class CheckCurrencyRate extends Command
 
             $text = "📈 Курс {$alert->currency}: {$rate} BYN\n📊 Порог: {$alert->threshold} BYN\n📅 Дата: " . now()->format('d-m-Y H:i') . "\n👤 Email: {$alert->email}";
 
-            $telegramResponse = Http::post('https://api.telegram.org/bot' . env('TELEGRAM_BOT_TOKEN') . '/sendMessage', [
-                'chat_id' => env('TELEGRAM_CHAT_ID'),
+            $telegramResponse = Http::post('https://api.telegram.org/bot' . $alert->telegram_bot_token . '/sendMessage', [
+                'chat_id' => $alert->telegram_chat_id,
                 'text' => $text,
             ]);
 
