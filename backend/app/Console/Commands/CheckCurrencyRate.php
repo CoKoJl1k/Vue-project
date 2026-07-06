@@ -48,9 +48,7 @@ class CheckCurrencyRate extends Command
                 $this->error('Telegram error: ' . $telegramResponse->body());
                 return 1;
             }
-
             $alert->update(['last_sent_at' => now()]);
-
             $this->info("Telegram notification sent");
         } else {
             $this->info("Rate {$rate} below threshold {$alert->threshold}");
