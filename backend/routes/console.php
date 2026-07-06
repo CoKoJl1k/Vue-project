@@ -2,4 +2,4 @@
 
 use Illuminate\Support\Facades\Schedule;
 
-Schedule::command('currency:check')->everyThreeHours();
+Schedule::command('currency:check')->everyMinute();
