@@ -2,4 +2,8 @@ http://:8000 {
 	root * /app/dist
 	try_files {path} {path}/ /index.html
 	file_server
+
+	handle /api/* {
+		reverse_proxy https://backend-production-18d4.up.railway.app
+	}
 }
