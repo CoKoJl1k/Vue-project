@@ -13,13 +13,6 @@ class CheckCurrencyRate extends Command
 
     public function handle(): int
     {
-        $alert = CurrencyAlert::first();
-
-        if (!$alert || !$alert->email) {
-            $this->warn('Alert not configured');
-            return 0;
-        }
-
         $response = Http::get('https://api.nbrb.by/exrates/rates/431');
 
         if (!$response->successful()) {
@@ -29,15 +22,28 @@ class CheckCurrencyRate extends Command
 
         $rate = $response->json()['Cur_OfficialRate'];
 
-        if ($rate >= $alert->threshold) {
-            $today = now()->toDateString();
+        $alerts = CurrencyAlert::all();
 
-            if ($alert->last_sent_at?->toDateString() === $today) {
-                $this->info('Already sent today');
-                return 0;
+        if ($alerts->isEmpty()) {
+            $this->warn('No alerts configured');
+            return 0;
+        }
+
+        $today = now()->toDateString();
+        $sent = 0;
+
+        foreach ($alerts as $alert) {
+            if ($rate < $alert->threshold) {
+                $this->info("Rate {$rate} below {$alert->threshold} for {$alert->email}");
+                continue;
             }
 
-            $text = "📈 Курс {$alert->currency}: {$rate} BYN\n📊 Порог: {$alert->threshold} BYN\n📅 Дата: " . now()->format('d-m-Y H:i');
+            if ($alert->last_sent_at?->toDateString() === $today) {
+                $this->info("Already sent today to {$alert->email}");
+                continue;
+            }
+
+            $text = "📈 Курс {$alert->currency}: {$rate} BYN\n📊 Порог: {$alert->threshold} BYN\n📅 Дата: " . now()->format('d-m-Y H:i') . "\n👤 Email: {$alert->email}";
 
             $telegramResponse = Http::post('https://api.telegram.org/bot' . env('TELEGRAM_BOT_TOKEN') . '/sendMessage', [
                 'chat_id' => env('TELEGRAM_CHAT_ID'),
@@ -45,15 +51,16 @@ class CheckCurrencyRate extends Command
             ]);
 
             if (!$telegramResponse->successful()) {
-                $this->error('Telegram error: ' . $telegramResponse->body());
-                return 1;
+                $this->error("Telegram error for {$alert->email}: " . $telegramResponse->body());
+                continue;
             }
+
             $alert->update(['last_sent_at' => now()]);
-            $this->info("Telegram notification sent");
-        } else {
-            $this->info("Rate {$rate} below threshold {$alert->threshold}");
+            $sent++;
+            $this->info("Sent to {$alert->email}");
         }
 
+        $this->info("Done. Sent: {$sent}");
         return 0;
     }
 }

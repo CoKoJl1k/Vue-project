@@ -179,8 +179,8 @@ function convert(from, amount) {
     </div>
 
     <div class="notify-section">
-      <h2>Уведомление на email</h2>
-      <p>Получить письмо, когда курс достигнет порога</p>
+      <h2>Уведомление в Telegram</h2>
+      <p>Информация будет отправлена в Telegram бот @CurrencyMonitorForMeBot</p>
       <input v-model="notifyEmail" placeholder="your@email.com" class="notify-input" />
       <label>Валюта:</label>
       <select v-model="notifyCurrency">
