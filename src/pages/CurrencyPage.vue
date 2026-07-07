@@ -135,7 +135,7 @@ async function saveNotification() {
   const res = await fetch('/api/alert', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: notifyEmail.value, currency: notifyCurrency.value, max_threshold: notifyMaxThreshold.value, min_threshold: notifyMinThreshold.value, telegram_bot_token: notifyBotToken.value, telegram_chat_id: notifyChatId.value }),
+    body: JSON.stringify({ email: notifyEmail.value.trim(), currency: notifyCurrency.value, max_threshold: notifyMaxThreshold.value, min_threshold: notifyMinThreshold.value, telegram_bot_token: notifyBotToken.value.trim(), telegram_chat_id: notifyChatId.value.trim() }),
   })
   const data = await res.json()
   notifyStatus.value = data.ok ? '✅ Настройки сохранены' : '❌ ' + (data.error || 'Ошибка')
@@ -310,7 +310,7 @@ select {
   box-sizing: border-box;
 }
 .notify-section {
-  flex: 0.6;
+  flex: 1.3;
   min-width: 280px;
 }
 .form-row {
