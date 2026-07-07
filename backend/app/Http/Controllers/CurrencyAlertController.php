@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CurrencyRequest;
 use App\Models\CurrencyAlert;
 use Illuminate\Http\JsonResponse;
+
 class CurrencyAlertController extends Controller
 {
     public function save(CurrencyRequest $request): JsonResponse
@@ -13,12 +14,12 @@ class CurrencyAlertController extends Controller
         $data['currency'] = strtoupper($data['currency']);
 
         CurrencyAlert::updateOrCreate(
-            ['email' => $data['email'], 'currency' => $data['currency']],
+            [CurrencyAlert::EMAIL => $data['email'], CurrencyAlert::CURRENCY => $data['currency']],
             [
-                'max_threshold' => $data['max_threshold'],
-                'min_threshold' => $data['min_threshold'],
-                'telegram_bot_token' => $data['telegram_bot_token'] ?? null,
-                'telegram_chat_id' => $data['telegram_chat_id'] ?? null,
+                CurrencyAlert::MAX_THRESHOLD => $data['max_threshold'],
+                CurrencyAlert::MIN_THRESHOLD => $data['min_threshold'],
+                CurrencyAlert::TELEGRAM_BOT_TOKEN => $data['telegram_bot_token'] ?? null,
+                CurrencyAlert::TELEGRAM_CHAT_ID => $data['telegram_chat_id'] ?? null,
             ]
         );
 

@@ -32,8 +32,8 @@ class CheckCurrencyRate extends Command
         }
         $sent = 0;
         foreach ($alerts as $alert) {
-            if ($alert->last_sent_at && $alert->last_sent_at->gt(now()->subHours(3))) {
-                $this->info("Already sent recently to {$alert->email}");
+            if ($alert->last_sent_at && $alert->last_sent_at->isToday()) {
+                $this->info("Already sent today to {$alert->email}");
                 continue;
             }
             if ($rate >= $alert->max_threshold || $rate <= $alert->min_threshold) {
@@ -60,7 +60,7 @@ class CheckCurrencyRate extends Command
                 continue;
             }
 
-            $alert->update(['last_sent_at' => now()]);
+            $alert->update([CurrencyAlert::LAST_SENT_AT => now()]);
             $sent++;
             $this->info("Sent alert to {$alert->email}");
         }
