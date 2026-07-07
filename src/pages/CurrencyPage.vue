@@ -26,6 +26,18 @@ const notifyMinThreshold = ref(null)
 const notifyBotToken = ref('')
 const notifyChatId = ref('')
 const notifyStatus = ref('')
+const errors = ref({})
+
+function validate() {
+  const e = {}
+  if (!notifyEmail.value) e.email = 'Email required'
+  if (!notifyMaxThreshold.value) e.max_threshold = 'Max threshold required'
+  if (!notifyMinThreshold.value) e.min_threshold = 'Min threshold required'
+  if (!notifyBotToken.value) e.telegram_bot_token = 'Bot token required'
+  if (!notifyChatId.value) e.telegram_chat_id = 'Chat ID required'
+  errors.value = e
+  return Object.keys(e).length === 0
+}
 
 const periods = [
   { value: '1m', label: '1 месяц' },
@@ -118,6 +130,7 @@ async function loadChart() {
 }
 
 async function saveNotification() {
+  if (!validate()) return
   notifyStatus.value = ''
   const res = await fetch('/api/alert', {
     method: 'POST',
@@ -145,6 +158,45 @@ function convert(from, amount) {
     <div v-if="loading" class="loading">Загрузка...</div>
 
     <div v-else class="content-row">
+      <div class="notify-section">
+        <h2>Уведомление в Telegram</h2>
+        <div class="form-row">
+          <label>Email:</label>
+          <input v-model="notifyEmail" placeholder="email" class="notify-input" required />
+          <span v-if="errors.email" class="field-error">{{ errors.email }}</span>
+        </div>
+        <div class="form-row">
+          <label>Валюта:</label>
+          <select v-model="notifyCurrency">
+            <option v-for="cur in currencies" :key="cur.Cur_Abbreviation" :value="cur.Cur_Abbreviation">
+              {{ cur.Cur_Abbreviation }}
+            </option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Макс порог:</label>
+          <input v-model.number="notifyMaxThreshold" type="number" step="0.01" class="notify-input" placeholder="напр. 3.0" required />
+          <span v-if="errors.max_threshold" class="field-error">{{ errors.max_threshold }}</span>
+        </div>
+        <div class="form-row">
+          <label>Мин порог:</label>
+          <input v-model.number="notifyMinThreshold" type="number" step="0.01" class="notify-input" required />
+          <span v-if="errors.min_threshold" class="field-error">{{ errors.min_threshold }}</span>
+        </div>
+        <div class="form-row">
+          <label>Токен бота:</label>
+          <input v-model="notifyBotToken" placeholder="bot token" class="notify-input" required />
+          <span v-if="errors.telegram_bot_token" class="field-error">{{ errors.telegram_bot_token }}</span>
+        </div>
+        <div class="form-row">
+          <label>Chat ID:</label>
+          <input v-model="notifyChatId" placeholder="chat id" class="notify-input" required />
+          <span v-if="errors.telegram_chat_id" class="field-error">{{ errors.telegram_chat_id }}</span>
+        </div>
+        <button class="btn-save" @click="saveNotification">Сохранить</button>
+        <p v-if="notifyStatus" v-text="notifyStatus" />
+      </div>
+
       <div class="rates-block">
         <h1>Курсы валют</h1>
         <table class="rates">
@@ -188,40 +240,6 @@ function convert(from, amount) {
         <p v-else class="loading">Загрузка графика...</p>
       </div>
     </div>
-
-      <div class="notify-section">
-        <h2>Уведомление в Telegram</h2>
-        <div class="form-row">
-          <label>Email:</label>
-          <input v-model="notifyEmail" placeholder="email" class="notify-input" required />
-        </div>
-        <div class="form-row">
-          <label>Валюта:</label>
-          <select v-model="notifyCurrency">
-            <option v-for="cur in currencies" :key="cur.Cur_Abbreviation" :value="cur.Cur_Abbreviation">
-              {{ cur.Cur_Abbreviation }}
-            </option>
-          </select>
-        </div>
-        <div class="form-row">
-          <label>Макс порог:</label>
-          <input v-model.number="notifyMaxThreshold" type="number" step="0.01" class="notify-input" placeholder="напр. 3.0" required />
-        </div>
-        <div class="form-row">
-          <label>Мин порог:</label>
-          <input v-model.number="notifyMinThreshold" type="number" step="0.01" class="notify-input" required />
-        </div>
-        <div class="form-row">
-          <label>Токен бота:</label>
-          <input v-model="notifyBotToken" placeholder="bot token" class="notify-input" />
-        </div>
-        <div class="form-row">
-          <label>Chat ID:</label>
-          <input v-model="notifyChatId" placeholder="chat id" class="notify-input" />
-        </div>
-        <button class="btn-save" @click="saveNotification">Сохранить</button>
-        <p v-if="notifyStatus" v-text="notifyStatus" />
-      </div>
   </div>
 </template>
 
@@ -239,9 +257,10 @@ function convert(from, amount) {
   gap: 2rem;
   align-items: flex-start;
   flex-wrap: wrap;
+  padding: 10px 20px;
 }
 .rates-block {
-  flex: 1;
+  flex: 1.3;
   min-width: 300px;
 }
 .rates {
@@ -268,7 +287,7 @@ function convert(from, amount) {
   margin: 0;
 }
 .chart-section {
-  flex: 1;
+  flex: 2;
   min-width: 300px;
   padding: 0 12px;
   width: 100%;
@@ -291,11 +310,12 @@ select {
   box-sizing: border-box;
 }
 .notify-section {
-  margin-top: 2rem;
-  max-width: 400px;
+  flex: 0.6;
+  min-width: 280px;
 }
 .form-row {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 8px;
   margin-bottom: 6px;
@@ -322,5 +342,11 @@ select {
   padding: 12px 28px;
   font-size: 1.1rem;
   border-radius: 10px;
+}
+.field-error {
+  color: #e74c3c;
+  font-size: 0.8rem;
+  width: 100%;
+  margin-left: 108px;
 }
 </style>

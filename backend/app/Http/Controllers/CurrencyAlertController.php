@@ -18,8 +18,8 @@ class CurrencyAlertController extends Controller
             [
                 CurrencyAlert::MAX_THRESHOLD => $data['max_threshold'],
                 CurrencyAlert::MIN_THRESHOLD => $data['min_threshold'],
-                CurrencyAlert::TELEGRAM_BOT_TOKEN => $data['telegram_bot_token'] ?? null,
-                CurrencyAlert::TELEGRAM_CHAT_ID => $data['telegram_chat_id'] ?? null,
+                CurrencyAlert::TELEGRAM_BOT_TOKEN => $data['telegram_bot_token'],
+                CurrencyAlert::TELEGRAM_CHAT_ID => $data['telegram_chat_id'],
             ]
         );
 

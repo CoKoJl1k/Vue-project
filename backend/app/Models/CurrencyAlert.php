@@ -6,13 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class CurrencyAlert extends Model
 {
-    const EMAIL = 'email';
-    const CURRENCY = 'currency';
-    const MAX_THRESHOLD = 'max_threshold';
-    const MIN_THRESHOLD = 'min_threshold';
-    const LAST_SENT_AT = 'last_sent_at';
-    const TELEGRAM_BOT_TOKEN = 'telegram_bot_token';
-    const TELEGRAM_CHAT_ID = 'telegram_chat_id';
+    const string EMAIL = 'email';
+    const string CURRENCY = 'currency';
+    const string MAX_THRESHOLD = 'max_threshold';
+    const string MIN_THRESHOLD = 'min_threshold';
+    const string LAST_SENT_AT = 'last_sent_at';
+    const string TELEGRAM_BOT_TOKEN = 'telegram_bot_token';
+    const string TELEGRAM_CHAT_ID = 'telegram_chat_id';
 
     protected $fillable = [
         self::EMAIL,
