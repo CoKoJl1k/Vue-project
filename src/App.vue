@@ -32,11 +32,25 @@ body {
   --bg: #fff;
   --text: #2c3e50;
   --border: #ccc;
+  --btn: #ccc;
 }
 body:has(.dark) {
   --bg: #1a1a2e;
   --text: #eee;
   --border: #444;
+  --btn: #555;
+}
+button {
+  background: var(--btn, #ccc);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--text);
+}
+body:has(.dark) button {
+  background: #555;
 }
 </style>
 
@@ -56,13 +70,11 @@ a {
 a.router-link-active {
   color: #42b883;
 }
-button {
+nav button {
   margin-left: auto;
   font-size: 1.3rem;
   background: none;
-  border: 1px solid var(--border);
-  border-radius: 6px;
+  border: none;
   padding: 4px 10px;
-  cursor: pointer;
 }
 </style>

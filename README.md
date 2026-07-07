@@ -49,7 +49,6 @@ second-project-vue/
 │   ├── App.vue
 │   └── main.js
 ├── vite.config.js            # /api → http://backend:8000
-├── DEPLOY_ORACLE.md          # инструкция Oracle Cloud
 └── DEPLOY_RAILWAY.md         # инструкция Railway.app
 ```
 
@@ -100,3 +99,6 @@ Upsert по паре (email + currency).
 | `/` | HomePage — Super IT презентация |
 | `/notes` | NotesPage — CRUD заметок (Pinia) |
 | `/currency` | CurrencyPage — курсы валют, график, уведомления |
+
+## SITE
+https://front-production-fd85.up.railway.app

@@ -164,19 +164,16 @@ function deleteNote() {
 }
 button {
   padding: 4px 12px;
-  cursor: pointer;
 }
 .remove {
-  background: #e74c3c;
-  color: #fff;
+  background: var(--btn, #ccc);
   border: none;
-  padding: 4px 12px;
-  border-radius: 4px;
+  border-radius: 8px;
 }
 .cancel {
-  background: #95a5a6;
-  color: #fff;
+  background: var(--btn, #ccc);
   border: none;
+  border-radius: 8px;
 }
 .empty {
   color: #999;

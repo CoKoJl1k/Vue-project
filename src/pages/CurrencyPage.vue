@@ -21,7 +21,8 @@ const loading = ref(true)
 
 const notifyEmail = ref('')
 const notifyCurrency = ref('USD')
-const notifyThreshold = ref(3.0)
+const notifyMaxThreshold = ref(null)
+const notifyMinThreshold = ref(null)
 const notifyBotToken = ref('')
 const notifyChatId = ref('')
 const notifyStatus = ref('')
@@ -58,6 +59,11 @@ onMounted(async () => {
       { Cur_Abbreviation: 'RUB', Cur_OfficialRate: 0.0, Cur_Name: 'Российский рубль', Cur_Scale: 100 },
       { Cur_Abbreviation: 'CNY', Cur_OfficialRate: 0.0, Cur_Name: 'Китайский юань', Cur_Scale: 10 },
     ]
+  }
+  const usd = currencies.value.find((c) => c.Cur_Abbreviation === 'USD')
+  if (usd && usd.Cur_OfficialRate > 0) {
+    notifyMaxThreshold.value = +(usd.Cur_OfficialRate + 0.05).toFixed(2)
+    notifyMinThreshold.value = +(usd.Cur_OfficialRate - 0.05).toFixed(2)
   }
   loading.value = false
   await loadChart()
@@ -116,7 +122,7 @@ async function saveNotification() {
   const res = await fetch('/api/alert', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: notifyEmail.value, currency: notifyCurrency.value, threshold: notifyThreshold.value, telegram_bot_token: notifyBotToken.value, telegram_chat_id: notifyChatId.value }),
+    body: JSON.stringify({ email: notifyEmail.value, currency: notifyCurrency.value, max_threshold: notifyMaxThreshold.value, min_threshold: notifyMinThreshold.value, telegram_bot_token: notifyBotToken.value, telegram_chat_id: notifyChatId.value }),
   })
   const data = await res.json()
   notifyStatus.value = data.ok ? '✅ Настройки сохранены' : '❌ ' + (data.error || 'Ошибка')
@@ -187,7 +193,7 @@ function convert(from, amount) {
         <h2>Уведомление в Telegram</h2>
         <div class="form-row">
           <label>Email:</label>
-          <input v-model="notifyEmail" placeholder="email" class="notify-input" />
+          <input v-model="notifyEmail" placeholder="email" class="notify-input" required />
         </div>
         <div class="form-row">
           <label>Валюта:</label>
@@ -198,8 +204,12 @@ function convert(from, amount) {
           </select>
         </div>
         <div class="form-row">
-          <label>Порог (BYN):</label>
-          <input v-model.number="notifyThreshold" type="number" step="0.01" class="notify-input" />
+          <label>Макс порог:</label>
+          <input v-model.number="notifyMaxThreshold" type="number" step="0.01" class="notify-input" placeholder="напр. 3.0" required />
+        </div>
+        <div class="form-row">
+          <label>Мин порог:</label>
+          <input v-model.number="notifyMinThreshold" type="number" step="0.01" class="notify-input" required />
         </div>
         <div class="form-row">
           <label>Токен бота:</label>
@@ -209,7 +219,7 @@ function convert(from, amount) {
           <label>Chat ID:</label>
           <input v-model="notifyChatId" placeholder="chat id" class="notify-input" />
         </div>
-        <button @click="saveNotification">Сохранить</button>
+        <button class="btn-save" @click="saveNotification">Сохранить</button>
         <p v-if="notifyStatus" v-text="notifyStatus" />
       </div>
   </div>
@@ -307,5 +317,10 @@ select {
   color: var(--text);
   border: 1px solid var(--border);
   border-radius: 6px;
+}
+.btn-save {
+  padding: 12px 28px;
+  font-size: 1.1rem;
+  border-radius: 10px;
 }
 </style>
